@@ -1,0 +1,26 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    container: alpine/helm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: mkdir -p ~/.kube
+      - run: echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+      - run: |
+          IMAGE_TAG=${{ github.sha }}
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_TAG=$(echo $IMAGE_TAG | sed -e 's/^v//')
+          IMAGE_NAME=$(echo ${{ github.repository }} | sed -e 's/.*\///')
+          IMAGE_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          helm upgrade --install --namespace yoyota \
+            --set image.repository=$IMAGE_REPOSITORY \
+            --set image.tag=$IMAGE_TAG \
+            --set imagePullSecrets[0].name=regcred-github-com \
+            --history-max 2 \
+            auditok-server ./helm

@@ -1,0 +1,14 @@
+apiVersion: skaffold/v1
+kind: Config
+build:
+  artifacts:
+    - image: yoyota/python-auditok-server
+deploy:
+  helm:
+    releases:
+      - name: python-auditok-server
+        namespace: yoyota
+        chartPath: helm
+        setValueTemplates:
+          image.repository: "{{.IMAGE_NAME}}"
+          image.tag: "{{.DIGEST_HEX}}"

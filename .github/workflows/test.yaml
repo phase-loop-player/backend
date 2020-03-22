@@ -1,0 +1,20 @@
+name: "test"
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('setup.py') }}
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "3.6"
+      - run: pip install -e ".[test]"
+      - run: pylint auditok_server tests setup.py
+      - run: pytest
