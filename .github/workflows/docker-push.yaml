@@ -1,26 +1,22 @@
-name: deploy
+name: docker
 
 on:
   push:
     branches:
       - master
+    tags:
+      - v*
 
 jobs:
-  deploy:
-    container: alpine/helm
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: mkdir -p ~/.kube
-      - run: echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - run: |
-          IMAGE_TAG=${{ github.sha }}
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_TAG=$(echo $IMAGE_TAG | sed -e 's/^v//')
+          TAG=${{ github.sha }}
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && TAG=$(echo $VERSION | sed -e 's/^v//')
           IMAGE_NAME=$(echo ${{ github.repository }} | sed -e 's/.*\///')
-          IMAGE_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-          helm upgrade --install --namespace yoyota \
-            --set image.repository=$IMAGE_REPOSITORY \
-            --set image.tag=$IMAGE_TAG \
-            --set imagePullSecrets[0].name=regcred-github-com \
-            --history-max 2 \
-            auditok-server ./helm
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME:$TAG
+          docker build . --file Dockerfile --tag $IMAGE_ID
+          docker push $IMAGE_ID

@@ -13,16 +13,14 @@ jobs:
       - uses: actions/checkout@v2
       - run: mkdir -p ~/.kube
       - run: echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-      - name: get image repository
-        id: image-repository
-        run: |
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$VERSION
-          echo "::set-output name=repository::$IMAGE_ID"
-      - run: helm upgrade --install --namespace yoyota
-          --set image.repository=${{ steps.image-repository.outputs.repository }}
-          --set image.tag=${{ github.sha }}
-          --set imagePullSecrets[0].name=regcred-github-com
-          --history-max 2
-          auditok-server ./helm
+      - run: |
+          IMAGE_TAG=${{ github.sha }}
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_TAG=$(echo $IMAGE_TAG | sed -e 's/^v//')
+          IMAGE_NAME=$(echo ${{ github.repository }} | sed -e 's/.*\///')
+          IMAGE_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          helm upgrade --install --namespace yoyota \
+            --set image.repository=$IMAGE_REPOSITORY \
+            --set image.tag=$IMAGE_TAG \
+            --set imagePullSecrets[0].name=regcred-github-com \
+            --history-max 2 \
+            auditok-server ./helm
