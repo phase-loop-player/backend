@@ -17,4 +17,5 @@ jobs:
           python-version: "3.6"
       - run: pip install -e ".[test]"
       - run: pylint auditok_server tests setup.py
+      - run: apt-get install -y ffmpeg
       - run: pytest
