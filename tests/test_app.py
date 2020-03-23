@@ -16,6 +16,12 @@ def test_health(client):
     assert rv.status_code == 204
 
 
-def test_hello_world(client):
+def test_root_route_no_query_string(client):
     rv = client.get("/")
-    assert rv.data == b"hello world!"
+    assert rv.status_code == 400
+
+
+def test_root_route(client):
+    path = "/?url=https://www.youtube.com/watch?v=gGVD8vzWWmU&t=1s"
+    rv = client.get(path)
+    assert rv.status_code == 200

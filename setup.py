@@ -1,7 +1,12 @@
 from os import path
 from setuptools import setup, find_packages
 
-DEPENDENCIES = ["flask"]
+DEPENDENCIES = [
+    "flask",
+    "pytube3",
+    "pydub",
+    "forked-auditok-split-without-data",
+]
 TEST_DEPENDENCIES = ["pylint", "pytest", "pytest-mock"]
 
 
