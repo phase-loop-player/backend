@@ -41,8 +41,8 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: auditok-server.dudaji.org
-      paths: ["/"]
+    - host: phase-loop-player.dudaji.org
+      paths: ["/api"]
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
