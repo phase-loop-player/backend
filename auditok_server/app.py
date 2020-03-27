@@ -26,7 +26,7 @@ def health():
 
 
 @app.route("/api/regions")
-def hello_world():
+def regions():
     url = request.args.get("url")
     if not url:
         return ("url is empty", 400)

@@ -42,7 +42,7 @@ ingress:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: phase-loop-player.dudaji.org
+    - host: phrase-loop-player.dudaji.org
       paths: ["/api"]
   tls: []
   #  - secretName: chart-example-tls
