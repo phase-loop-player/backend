@@ -17,11 +17,11 @@ def test_health(client):
 
 
 def test_root_route_no_query_string(client):
-    rv = client.get("/")
+    rv = client.get("/api/regions")
     assert rv.status_code == 400
 
 
 def test_root_route(client):
-    path = "/?url=https://www.youtube.com/watch?v=gGVD8vzWWmU&t=1s"
+    path = "/api/regions?url=https://www.youtube.com/watch?v=gGVD8vzWWmU&t=1s"
     rv = client.get(path)
     assert rv.status_code == 200

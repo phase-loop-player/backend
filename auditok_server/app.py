@@ -25,7 +25,7 @@ def health():
     return ("", 204)
 
 
-@app.route("/")
+@app.route("/api/regions")
 def hello_world():
     url = request.args.get("url")
     if not url:
