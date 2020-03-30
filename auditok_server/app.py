@@ -11,11 +11,15 @@ app = Flask(__name__)
 TEMP_FILENAME = "temp"
 
 
-def get_regions(url, dirpath):
+def get_regions(url, dirpath, min_duration, max_duration):
     yt = YouTube(url)
     for stream in yt.streams.filter(mime_type="audio/webm"):
         stream.download(dirpath, TEMP_FILENAME)
-        regions = split(os.path.join(dirpath, TEMP_FILENAME + ".webm"))
+        regions = split(
+            os.path.join(dirpath, TEMP_FILENAME + ".webm"),
+            min_duration,
+            max_duration,
+        )
         return {"regions": list(regions)}
     return ("No avaiable webm audios", 404)
 
@@ -26,13 +30,15 @@ def health():
 
 
 @app.route("/api/regions")
-def regions():
+def get_url_audio_regions():
     url = request.args.get("url")
     if not url:
         return ("url is empty", 400)
+    min_duration = int(request.args.get("min_duration", 3))
+    max_duration = int(request.args.get("max_duration", 7))
     dirpath = tempfile.mkdtemp()
     try:
-        return get_regions(url, dirpath)
+        return get_regions(url, dirpath, min_duration, max_duration)
     # pylint: disable=broad-except
     except Exception as e:
         return (str(e), 500)
