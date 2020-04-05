@@ -34,8 +34,8 @@ def get_url_audio_regions():
     url = request.args.get("url")
     if not url:
         return ("url is empty", 400)
-    min_duration = int(request.args.get("min_duration", 3))
-    max_duration = int(request.args.get("max_duration", 7))
+    min_duration = float(request.args.get("min_duration", 3))
+    max_duration = float(request.args.get("max_duration", 7))
     dirpath = tempfile.mkdtemp()
     try:
         return get_regions(url, dirpath, min_duration, max_duration)
