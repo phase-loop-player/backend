@@ -68,6 +68,7 @@ tolerations: []
 affinity: {}
 
 args: 
+  - --access-logfile=-
   - --workers=4
   - --bind=0.0.0.0:8080
   - auditok_server.app:app
